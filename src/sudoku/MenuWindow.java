@@ -9,13 +9,11 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
 import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent; 
 
 public class MenuWindow {
 
@@ -39,8 +37,9 @@ public class MenuWindow {
         frmSudoku.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frmSudoku.getContentPane().setLayout(null);
         frmSudoku.setResizable(false);
-
-        final ImagePanel MainMenuPanel = new ImagePanel(new ImageIcon("pics/MenuBackground.png").getImage());
+        
+        final ImagePanel MainMenuPanel = new ImagePanel(new ImageIcon(getClass().getResource("/images/MenuBackground.png")).getImage());
+        //final ImagePanel MainMenuPanel = new ImagePanel(new ImageIcon("/images/MenuBackground.png").getImage());
         MainMenuPanel.setFocusable(false);
         MainMenuPanel.setBounds(0, 0, 450, 300);
         frmSudoku.getContentPane().add(MainMenuPanel);
@@ -49,8 +48,8 @@ public class MenuWindow {
         JButton LoadButton = new JButton("Load Puzzle");
         LoadButton.setBounds(44, 104, 120, 50);
         MainMenuPanel.add(LoadButton);
-        LoadButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        LoadButton.addActionListener(
+            (ActionEvent e) -> {
                 JFileChooser fc = new JFileChooser();
                 int returnVal = fc.showOpenDialog(null);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -65,29 +64,30 @@ public class MenuWindow {
                     } catch (java.io.FileNotFoundException e1) {
                         // todo: Display an error to the user
                     }
-                    puzzle.Solve();
-                    if (!puzzle.isSolved()) {
+                    if (puzzle.Solve()) {
+                        window = new GameWindow(puzzle);
+                        window.makeVisible();
+                        frmSudoku.setVisible(false);
+                    } else {
                         //todo: Show error to user, loaded puzzle is not solvable
                     }
-                    window = new GameWindow(puzzle);
-                    window.makeVisible();
-                    frmSudoku.setVisible(false);
+                    
                 } else {
                     // todo: Invalid File
                 }
             }
-        });
+        );
 
         JButton ExitButton = new JButton("Exit");
         ExitButton.setBounds(44, 165, 120, 50);
         MainMenuPanel.add(ExitButton);
-        ExitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
+        ExitButton.addActionListener(
+            (ActionEvent e) -> {
                 System.exit(0);
             }
-        });
+        );
 
-        final ImagePanel DiffPanel = new ImagePanel(new ImageIcon("Pics/MenuBackground.png").getImage());
+        final ImagePanel DiffPanel = new ImagePanel(new ImageIcon(getClass().getResource("/images/MenuBackground.png")).getImage());
         DiffPanel.setFocusable(false);
         DiffPanel.setBounds(0, 0, 450, 300);
         frmSudoku.getContentPane().add(DiffPanel);
@@ -115,8 +115,8 @@ public class MenuWindow {
         DiffPanel.add(diffLabel);
 
         //Prints the difficulty selected for each tick mark on the slider
-        slider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
+        slider.addChangeListener(
+            (ChangeEvent e) -> {
                 switch(slider.getValue()){
                 case 1:
                     diffLabel.setText("Very Easy");
@@ -134,47 +134,47 @@ public class MenuWindow {
                     diffLabel.setText("Very Difficult");
                     break;
                 default:
-
+                    //Todo: Do something here
                 }
             }
-        });
+        );
 
         final JButton StartGame = new JButton("Start");
-        StartGame.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        StartGame.setBounds(304, 200, 120, 50);
+        StartGame.setVisible(false);
+        DiffPanel.add(StartGame);
+        StartGame.addActionListener(
+            (ActionEvent e) -> {
                 puzzle.makePuzzle(DifficultyType.fromInt(slider.getValue()));
                 window = new GameWindow(puzzle);
                 window.makeVisible();
                 frmSudoku.setVisible(false);
             }
-        });
-        StartGame.setBounds(304, 200, 120, 50);
-        StartGame.setVisible(false);
-        DiffPanel.add(StartGame);
-
+        );
+        
         final JButton BackToMain = new JButton("Back");
         BackToMain.setBounds(10, 11, 89, 23);
         BackToMain.setVisible(false);
         DiffPanel.add(BackToMain);
-        BackToMain.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        BackToMain.addActionListener(
+            (ActionEvent e) -> {
                 MainMenuPanel.setVisible(true);
                 DiffPanel.setVisible(false);
                 StartGame.setVisible(false);
                 BackToMain.setVisible(false);
             }
-        });
+        );
 
         JButton NewButton = new JButton("New Puzzle");
         NewButton.setBounds(44, 43, 120, 50);
         MainMenuPanel.add(NewButton);
-        NewButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        NewButton.addActionListener(
+            (ActionEvent e) -> {
                 MainMenuPanel.setVisible(false);
                 DiffPanel.setVisible(true);
                 StartGame.setVisible(true);
                 BackToMain.setVisible(true);
             }
-        });
+        );
     }
 }

@@ -1,10 +1,12 @@
 package Sudoku;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class SudokuPuzzle {
 
     private boolean solvedFlag = false;
+    private boolean solutionFlag = false;
     private DifficultyType currentDifficulty = DifficultyType.None;
     public int[][] grid = new int[9][9];
     public int[][] solu = new int[9][9];
@@ -138,6 +140,14 @@ public class SudokuPuzzle {
         solvedFlag = false;
     }
     
+    public void setSolutionFlag() {
+        solutionFlag = true;
+    }
+    
+    public void clearSolutionFlag() {
+        solutionFlag = false;
+    }
+    
     //**************************************************************************
     // Core Operations
     //**************************************************************************
@@ -179,9 +189,14 @@ public class SudokuPuzzle {
         }
         return true;
     }
+    
+    public boolean isSolution() {
+        if (solutionFlag) return true;
+        return false;
+    }
 
     public boolean isValid() {
-        if (solvedFlag) return true;
+        if (solvedFlag||solutionFlag) return true;
         int counter = 0;
         for(int i = 0; i < 9 ; i++) {
             for(int j = 0; j < 9 ; j++) {
@@ -189,21 +204,22 @@ public class SudokuPuzzle {
                 if ( (0 > grid[i][j]) | (grid[i][j] > 10) ) return false; 
             }
         }
-        if (counter > 16) return true; // A sudoku with less than 16 cells is not solvable.
+        if (counter > 16) return true; // A sudoku with less than 16 cells is not solvable, google it.
         return false; 
     }
 
-    public final void Solve() {
-        if (solvedFlag) return;
-        if(!isValid()) return;
+    public final boolean Solve() {
+        if (solvedFlag||solutionFlag) return true;
+        if(!isValid()) return false;
         for( int i = 0; i < 9; i++ )
             System.arraycopy(grid[i], 0, solu[i], 0, 9);
-        try{Backtrack_solver(0,0);}
-        catch(Exception e) {
-            // todo: we need to throw an error
-            // or do we? 
+        try{
+            Backtrack_solver(0,0);
         }
-        setSolvedFlag();
+        catch(Exception e) {
+            return true;
+        }
+        return false;
     }
 
     final public void makePuzzle( DifficultyType diff ) {
@@ -211,7 +227,7 @@ public class SudokuPuzzle {
         for( int i = 0; i < 9; i++ )
             System.arraycopy(grid[i], 0, solu[i], 0, 9);
         setDifficulty(diff);
-        setSolvedFlag();
+        setSolutionFlag();
     }
     
     public void randomizeGrid() {
