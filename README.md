@@ -44,7 +44,6 @@ Loading and saving from a flat file is handled by looping over the grids and wri
 
 Issues
 -------
-* When checking if a puzzle is solvable ...Currently the check is wring 16 issue
 * Loading an unsolvable puzzle does not produce an error.
 * Loading a file that throws FileNotFoundException does not produce an error.
 
